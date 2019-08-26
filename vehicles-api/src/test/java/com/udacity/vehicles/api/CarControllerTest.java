@@ -21,6 +21,7 @@ import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 import java.net.URI;
 import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,7 @@ public class CarControllerTest {
      * Creates pre-requisites for testing, such as an example car.
      */
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         Car car = getCar();
         car.setId(1L);
         given(carService.save(any())).willReturn(car);
@@ -91,12 +92,9 @@ public class CarControllerTest {
      */
     @Test
     public void listCars() throws Exception {
-        /**
-         * TODO: Add a test to check that the `get` method works by calling
-         *   the whole list of vehicles. This should utilize the car from `getCar()`
-         *   below (the vehicle will be the first in the list).
-         */
-
+        mvc.perform(get(new URI("/cars")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$._embedded.carList[0]").exists());
     }
 
     /**
@@ -105,10 +103,11 @@ public class CarControllerTest {
      */
     @Test
     public void findCar() throws Exception {
-        /**
-         * TODO: Add a test to check that the `get` method works by calling
-         *   a vehicle by ID. This should utilize the car from `getCar()` below.
-         */
+        URI endpoint = new URI(String.format("/cars/%d", 1L));
+
+        mvc.perform(get(endpoint))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1));
     }
 
     /**
@@ -117,11 +116,10 @@ public class CarControllerTest {
      */
     @Test
     public void deleteCar() throws Exception {
-        /**
-         * TODO: Add a test to check whether a vehicle is appropriately deleted
-         *   when the `delete` method is called from the Car Controller. This
-         *   should utilize the car from `getCar()` below.
-         */
+        URI endpoint = new URI(String.format("/cars/%d", 1L));
+
+        mvc.perform(delete(endpoint))
+            .andExpect(status().isNoContent());
     }
 
     /**
