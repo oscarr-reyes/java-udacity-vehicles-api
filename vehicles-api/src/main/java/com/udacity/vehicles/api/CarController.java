@@ -90,21 +90,11 @@ class CarController {
 	 */
 	@PutMapping("/{id}")
 	ResponseEntity<?> put(@PathVariable Long id, @Valid @RequestBody Car car) {
-		/**
-		 * TODO: Set the id of the input car object to the `id` input.
-		 * TODO: Save the car using the `save` method from the Car service
-		 * TODO: Use the `assembler` on that updated car and return as part of the response.
-		 *   Update the first line as part of the above implementing.
-		 */
+		car.setId(id);
 
-		Car foundCar = this.carService.findById(id);
+		Car updatedCar = this.carService.save(car);
 
-		foundCar.setLocation(car.getLocation());
-		foundCar.setDetails(car.getDetails());
-		foundCar.setCondition(car.getCondition());
-		foundCar.setPrice(car.getPrice());
-
-		Resource<Car> resource = assembler.toResource(this.carService.save(foundCar));
+		Resource<Car> resource = assembler.toResource(updatedCar);
 		return ResponseEntity.ok(resource);
 	}
 
